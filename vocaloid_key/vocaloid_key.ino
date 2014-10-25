@@ -32,9 +32,10 @@ void loop () {
 	evy1.controlChange(channel, MIDI_CC_PORTAMENTO, 0x7f); // Portamento On
 	evy1.controlChange(channel, MIDI_CC_PORTAMENTO_TIME, 0x7f); // Portament Time
 	//evy1.pitchBend(0,i);
+
 	for(int j = 0 ; j < 12 ; ++j){
 		for(int i = 0 ; i < PA_BASE_SIZE; ++i){
-			evy1.eVocaloid(0,pa_extra_yu[i]);
+			evy1.eVocaloid(0,pa_base[i]);
 			evy1.noteOn(channel, 0x3c, 0x3f);//3c
 			delay(250);
 			evy1.noteOn(channel,0x3c,0x0);

@@ -17,18 +17,13 @@
 #define __cplusplus
 extern "C" void __cxa_pure_virtual() {;}
 
+void button_init();
+void button_scan();
+void button_decode();
 //
 //
+void command_readall();
 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard\pins_arduino.h" 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino\arduino.h"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\vocaloid_key.ino"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\ColorLCDShield.cpp"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\ColorLCDShield.h"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\eVY1.cpp"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\eVY1.h"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\eVY1Data.h"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\eVocaloidPhoneticAlphabets.h"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\midiClass.cpp"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\midiClass.h"
-#include "C:\Users\kamiya\repos\vocaloid_key\vocaloid_key\midiData.h"
+#include "C:\Users\kamiya\repos\vocaloid_key\matrix_key\matrix_key.ino"

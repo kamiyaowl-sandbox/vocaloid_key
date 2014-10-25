@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>6.2</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
-    <ProjectGuid>{f3df8c2f-ba79-4337-8970-98351f3b2104}</ProjectGuid>
+    <ProjectGuid>{8433be55-a634-41d6-961e-c2000a1bc675}</ProjectGuid>
     <avrdevice>atmega328p</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
@@ -12,9 +12,9 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>vocaloid_key</AssemblyName>
-    <Name>vocaloid_key</Name>
-    <RootNamespace>vocaloid_key</RootNamespace>
+    <AssemblyName>matrix_key</AssemblyName>
+    <Name>matrix_key</Name>
+    <RootNamespace>matrix_key</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
@@ -118,11 +118,6 @@
         <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
       </AvrGccCpp>
     </ToolchainSettings>
-    <VisualMicroSettings>
-      <VisualMicroSettings xmlns="">
-        <arduino.upload.port>COM16</arduino.upload.port>
-      </VisualMicroSettings>
-    </VisualMicroSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -203,44 +198,12 @@
         <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
       </AvrGccCpp>
     </ToolchainSettings>
-    <VisualMicroSettings>
-      <VisualMicroSettings xmlns="">
-        <arduino.upload.port>COM16</arduino.upload.port>
-      </VisualMicroSettings>
-    </VisualMicroSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ColorLCDShield.cpp">
+    <Compile Include="matrix_key.ino">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="ColorLCDShield.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="eVocaloidPhoneticAlphabets.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="eVY1.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="eVY1.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="eVY1Data.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="midiClass.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="midiClass.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="midiData.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Visual Micro\.vocaloid_key.vsarduino.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="vocaloid_key.ino">
+    <Compile Include="Visual Micro\.matrix_key.vsarduino.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
