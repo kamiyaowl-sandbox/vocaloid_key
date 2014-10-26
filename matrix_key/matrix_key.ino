@@ -4,7 +4,7 @@
 * Created: 10/25/2014 8:32:30 PM
 * Author: kamiya
 */
-#define SCAN_DELAY 5
+#define SCAN_DELAY 50
 
 #define COMMAND_READALL 0x1
 
@@ -34,7 +34,7 @@ void button_init(){
 void button_scan(){
 	for(int j = 0 ; j < cols_size ; ++j){
 		digitalWrite(cols[j],HIGH);
-		delay(SCAN_DELAY);
+		delayMicroseconds(SCAN_DELAY);
 		uint8_t scan_data = 0x0;
 		for (int i = 0 ; i < rows_size ; ++i){
 			scan_data |= (digitalRead(rows[i]) & 0x1) << i;

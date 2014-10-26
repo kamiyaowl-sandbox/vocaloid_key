@@ -5,7 +5,7 @@
     <ProjectVersion>6.2</ProjectVersion>
     <ToolchainName>com.Atmel.AVRGCC8.CPP</ToolchainName>
     <ProjectGuid>{8433be55-a634-41d6-961e-c2000a1bc675}</ProjectGuid>
-    <avrdevice>atmega328p</avrdevice>
+    <avrdevice>atmega32u4</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
     <Language>CPP</Language>
@@ -28,15 +28,15 @@
     <BootSegment>0</BootSegment>
     <AsfFrameworkConfig>
       <framework-data xmlns="">
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.17.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.17.0" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -50,8 +50,8 @@
         <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcc.compiler.symbols.DefSymbols>
           <ListValues>
-            <Value>__AVR_ATmega328p__</Value>
-            <Value>__AVR_ATmega328P__</Value>
+            <Value>__AVR_ATmega32u4__</Value>
+            <Value>__AVR_ATmega32U4__</Value>
             <Value>ARDUINO=101</Value>
             <Value>ARDUINO_MAIN</Value>
             <Value>F_CPU=16000000L</Value>
@@ -61,10 +61,10 @@
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
             <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
@@ -83,8 +83,8 @@
         <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcccpp.compiler.symbols.DefSymbols>
           <ListValues>
-            <Value>__AVR_ATmega328p__</Value>
-            <Value>__AVR_ATmega328P__</Value>
+            <Value>__AVR_ATmega32u4__</Value>
+            <Value>__AVR_ATmega32U4__</Value>
             <Value>ARDUINO=101</Value>
             <Value>ARDUINO_MAIN</Value>
             <Value>F_CPU=16000000L</Value>
@@ -94,10 +94,10 @@
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
             <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
@@ -130,8 +130,8 @@
         <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcc.compiler.symbols.DefSymbols>
           <ListValues>
-            <Value>__AVR_ATmega328p__</Value>
-            <Value>__AVR_ATmega328P__</Value>
+            <Value>__AVR_ATmega32u4__</Value>
+            <Value>__AVR_ATmega32U4__</Value>
             <Value>ARDUINO=101</Value>
             <Value>ARDUINO_MAIN</Value>
             <Value>F_CPU=16000000L</Value>
@@ -141,10 +141,10 @@
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
             <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
@@ -163,8 +163,8 @@
         <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcccpp.compiler.symbols.DefSymbols>
           <ListValues>
-            <Value>__AVR_ATmega328p__</Value>
-            <Value>__AVR_ATmega328P__</Value>
+            <Value>__AVR_ATmega32u4__</Value>
+            <Value>__AVR_ATmega32U4__</Value>
             <Value>ARDUINO=101</Value>
             <Value>ARDUINO_MAIN</Value>
             <Value>F_CPU=16000000L</Value>
@@ -174,10 +174,10 @@
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
             <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
