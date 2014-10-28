@@ -87,7 +87,7 @@ void command_readall(){
 //////////////////////////////////////////////////////////////////////////
 void setup(){
 	button_init();
-	Serial.begin(38400);
+	Serial.begin(BAUDRATE);
 }
 void loop(){
 	button_scan();

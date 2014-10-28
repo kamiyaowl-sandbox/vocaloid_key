@@ -1,5 +1,5 @@
  \
- C:\Users\kamiya\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\wiring_shift.c.o:  \
+ C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\wiring_shift.c.o:  \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino\wiring_shift.c \
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino\/wiring_private.h \
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino\/Arduino.h \

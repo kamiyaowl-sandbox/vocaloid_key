@@ -1,18 +1,104 @@
 #include "eVY1.h"
 #include "eVY1Data.h"
 #include "midiData.h"
-#include "ColorLCDShield.h"
 #include "eVocaloidPhoneticAlphabets.h"
+#include <SoftwareSerial.h>
 
-eVY1 evy1(&Serial);
-LCDShield lcd;
+#define SCAN_DELAY 1
+#define EVY1_BAUD 31250
+#define DEBUG_BAUD 19200
+
+#define FALSE 0
+#define TRUE 1
+
+#define TONE_NONE 0
+
+SoftwareSerial swserial(2,3);
+eVY1 evy1(&swserial);
+
+
+uint8_t cols[10] = {
+	22,24,26,28,30,
+	32,34,36,38,40,
+};
+uint8_t rows[6] = { 31,33,35,37,39,41 };
+//各列のデータを保持しておく（送信前に変換
+uint8_t button_inputs[10];
+//
+uint8_t button_datas[60];//押されている番号がtrue
+
+uint8_t cols_size = 10;
+uint8_t rows_size = 6;
+uint8_t button_size = 60;
+
+void button_init(){
+	for(int i = 0 ; i < cols_size ; ++i){
+		pinMode(cols[i],OUTPUT);
+		digitalWrite(cols[i],LOW);
+	}
+	for (int i = 0 ; i < rows_size ; ++i){
+		pinMode(rows[i],INPUT);//外部にプルダウン抵抗が必要
+	}
+}
+void button_scan(){
+	for(int j = 0 ; j < cols_size ; ++j){
+		digitalWrite(cols[j],HIGH);
+		delayMicroseconds(SCAN_DELAY);
+		uint8_t scan_data = 0x0;
+		for (int i = 0 ; i < rows_size ; ++i){
+			scan_data |= (digitalRead(rows[i]) & 0x1) << i;
+		}
+		button_inputs[j] = scan_data;
+		digitalWrite(cols[j],LOW);
+	}
+}
+/* After */
+//50 51 52 53 54 55 56 57 58 59
+//
+//45 40 35 30 25 20 15 10  5  0
+//46 41 36 31 26 31 16 11  6  1
+//47 42 37 32 27 32 17 12  7  2
+//48 43 38 33 28 33 18 13  8  3
+//49 44 39 34 29 32 19 14  9  4
+/* Before */
+// 9 8 7 6 5 4 3 2 1 0 :button_states
+//======================LSB
+// . . . . . . . . . .
+//
+// . . . . . . . . . .
+// . . . . . . . . . .
+// . . . . . . . . . .
+// . . . . . . . . . .
+// . . . . . . . . . .
+// . . . . . . . . . .
+//======================MSB
+
+void button_decode(){
+	for(int j = 0 ; j < cols_size ; ++j){
+		//あいう～～～～わをまでの5*10
+		for(int i = 0; i < 5 ; ++i){
+			uint8_t index = i + j * 5;
+			button_datas[index] = (button_inputs[j] >> (i + 1)) & 0x1;//i + 1で最上段を読み飛ばす
+		}
+		//上段特殊ボタン(インデックスの方向が逆（実機左から50,51,...59)
+		uint8_t up_index = button_size - j;
+		button_datas[up_index] = button_inputs[j] & 0b1;
+	}
+}
 
 void setup() {
-	Serial.begin(31250);
-	lcd.init(PHILLIPS);
-	lcd.contrast(-64);
-	lcd.clear(GREEN);
+	Serial.begin(DEBUG_BAUD);
+	Serial.println("wakeup");
+	swserial.begin(EVY1_BAUD);
+	button_init();
 	delay(2000); // wait for the shield to wake up
+	
+	evy1.eVocaloid(0,pa_base[7]);
+	evy1.noteOn(0, 0x3c, 0x3f);//3c
+	delay(250);
+	evy1.noteOn(0,0x3c,0x0);
+	delay(100);
+
 }
 uint8_t note_nums[] = {
 	48,50,52,53,55,57,59,
@@ -20,26 +106,70 @@ uint8_t note_nums[] = {
 	72,74,76,77,79,81,83,
 	84,86,88,89,91,83,85,
 };
+#define BUTTON_NONE 0xff
+uint8_t button_input = BUTTON_NONE;
+uint8_t button_input_last = 60;
+
+char* talk_data = NULL;
+
+uint8_t talking_tone = TONE_NONE;
+
+unsigned long last_input_tick = 0;
+unsigned long last_talk_tick = 0;
+
+
+unsigned long input_deadtime = 100;
+unsigned long talk_release_span = 1000;
+
+void talk_release( int channel )
+{
+	evy1.noteOn(channel,talking_tone,0x0);
+	talking_tone = TONE_NONE;
+}
 
 void loop () {
+	
 	int channel = 0;
-	char** pas[] = {
-		pa_base,pa_mark,pa_halfmark,
-		pa_extra_a,pa_extra_i,pa_extra_u,pa_extra_e,pa_extra_o,
-		pa_markextra_vowel,pa_markextra_y,
-		pa_halfmarkextra_vowel,pa_halfmarkextra_y
-	};
 	evy1.controlChange(channel, MIDI_CC_PORTAMENTO, 0x7f); // Portamento On
 	evy1.controlChange(channel, MIDI_CC_PORTAMENTO_TIME, 0x7f); // Portament Time
 	//evy1.pitchBend(0,i);
-
-	for(int j = 0 ; j < 12 ; ++j){
-		for(int i = 0 ; i < PA_BASE_SIZE; ++i){
-			evy1.eVocaloid(0,pa_base[i]);
-			evy1.noteOn(channel, 0x3c, 0x3f);//3c
-			delay(250);
-			evy1.noteOn(channel,0x3c,0x0);
-			delay(100);
+	
+	/* key read command */
+	button_scan();
+	button_decode();
+	
+	for(uint8_t i = 0 ; i < button_size ; ++i){
+		//一番番号のでかいボタンを優先
+		if(button_datas[i]) {
+			button_input = i;
 		}
 	}
+	
+	/* set data */
+	if(button_input_last != button_input && talk_data == NULL && button_input != BUTTON_NONE && (millis() - last_input_tick > input_deadtime)){
+		//test
+		if(button_input < 50) talk_data = pa_base[button_input];
+		//Memory
+		button_input_last = button_input;
+		button_input = BUTTON_NONE;
+		last_input_tick = millis();
+	}
+	/* talk */
+	if(talk_data != NULL){
+		if(talking_tone != TONE_NONE){
+			talk_release(channel);
+		}
+		evy1.eVocaloid(0,talk_data);
+		evy1.noteOn(channel, 0x3c, 0x3f);//3c
+		//Memory
+		talking_tone = 0x3c;
+		last_talk_tick = millis();
+		talk_data = NULL;
+	}
+	/* talk release */
+	if(talking_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span){
+		talk_release(channel);
+		button_input_last = BUTTON_NONE;
+	}
+	
 }
