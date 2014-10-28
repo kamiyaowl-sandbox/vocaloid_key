@@ -61,12 +61,12 @@
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
-            <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
+            <Value>\\roma\e10108\Win\MyDocuments\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\avr\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\</Value>
@@ -94,12 +94,12 @@
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
-            <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
+            <Value>\\roma\e10108\Win\MyDocuments\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\avr\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\</Value>
@@ -141,12 +141,12 @@
         </avrgcc.compiler.symbols.DefSymbols>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
-            <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
+            <Value>\\roma\e10108\Win\MyDocuments\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\avr\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\</Value>
@@ -174,12 +174,12 @@
         </avrgcccpp.compiler.symbols.DefSymbols>
         <avrgcccpp.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\leonardo</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
             <Value>C:\Program Files (x86)\Arduino\libraries</Value>
-            <Value>C:\Program Files (x86)\Arduino\hardware\Bare_Conductive_Arduino\libraries</Value>
+            <Value>C:\Program Files (x86)\Arduino\hardware\arduino\libraries</Value>
             <Value>C:\Program Files (x86)\Visual Micro\Visual Micro for Arduino\Micro Platforms\default\debuggers</Value>
-            <Value>C:\Users\kamiya\Documents\Arduino\libraries</Value>
+            <Value>\\roma\e10108\Win\MyDocuments\Arduino\libraries</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\include\avr\</Value>
             <Value>c:\program files (x86)\arduino\hardware\tools\avr\avr\</Value>

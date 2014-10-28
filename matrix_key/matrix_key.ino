@@ -4,9 +4,9 @@
 * Created: 10/25/2014 8:32:30 PM
 * Author: kamiya
 */
-#define SCAN_DELAY 50
+#define SCAN_DELAY 1
 
-#define COMMAND_READALL 0x1
+#define COMMAND_READALL 'r'
 
 uint8_t cols[10] = {
 	3,4,5,6,7,
@@ -40,7 +40,7 @@ void button_scan(){
 			scan_data |= (digitalRead(rows[i]) & 0x1) << i;
 		}
 		button_inputs[j] = scan_data;
-		digitalWrite(j,LOW);
+		digitalWrite(cols[j],LOW);
 	}
 }
 /* After */
@@ -76,11 +76,18 @@ void button_decode(){
 		button_datas[up_index] = button_inputs[j] & 0b1;
 	}
 }
+void command_readall(){
+	for(uint8_t i = 0 ; i < 60 ; ++i){
+		if(button_datas[i]){
+			Serial.println(i,DEC);
+		}
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 void setup(){
 	button_init();
-	Serial.begin(115200);
+	Serial.begin(38400);
 }
 void loop(){
 	button_scan();
@@ -94,13 +101,4 @@ void loop(){
 				break;
 		}
 	}
-}
-void command_readall(){
-	Serial.write(0xef);//StartCode
-	for(uint8_t i = 0 ; i < 60 ; ++i){
-		if(button_datas[i]){
-			Serial.write(i);
-		}
-	}
-	Serial.write(0xfe);//EndCode
 }
