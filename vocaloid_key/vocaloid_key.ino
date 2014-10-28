@@ -5,6 +5,7 @@
 #include <SoftwareSerial.h>
 
 #define SCAN_DELAY 1
+
 #define EVY1_BAUD 31250
 #define DEBUG_BAUD 19200
 
@@ -89,6 +90,7 @@ void button_decode(){
 void setup() {
 	Serial.begin(DEBUG_BAUD);
 	Serial.println("wakeup");
+	
 	swserial.begin(EVY1_BAUD);
 	button_init();
 	delay(2000); // wait for the shield to wake up
@@ -112,7 +114,7 @@ uint8_t button_input_last = 60;
 
 char* talk_data = NULL;
 
-uint8_t talking_tone = TONE_NONE;
+uint8_t talk_tone = TONE_NONE;
 
 unsigned long last_input_tick = 0;
 unsigned long last_talk_tick = 0;
@@ -123,8 +125,8 @@ unsigned long talk_release_span = 1000;
 
 void talk_release( int channel )
 {
-	evy1.noteOn(channel,talking_tone,0x0);
-	talking_tone = TONE_NONE;
+	evy1.noteOn(channel,talk_tone,0x0);
+	talk_tone = TONE_NONE;
 }
 
 void loop () {
@@ -156,18 +158,27 @@ void loop () {
 	}
 	/* talk */
 	if(talk_data != NULL){
-		if(talking_tone != TONE_NONE){
+		if(talk_tone != TONE_NONE){
 			talk_release(channel);
 		}
+		/* Tone *///62-85
+		talk_tone = (analogRead(A15) >> 5) + 56;//0~31
+		/* Talk */
 		evy1.eVocaloid(0,talk_data);
-		evy1.noteOn(channel, 0x3c, 0x3f);//3c
+		evy1.noteOn(channel, talk_tone, 0x3f);//3c
+
+		Serial.print("tone=");
+		Serial.print(talk_tone,DEC);
+		Serial.print("data=");
+		Serial.print(talk_data);
+		Serial.println();
+		
 		//Memory
-		talking_tone = 0x3c;
 		last_talk_tick = millis();
 		talk_data = NULL;
 	}
 	/* talk release */
-	if(talking_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span){
+	if(talk_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span){
 		talk_release(channel);
 		button_input_last = BUTTON_NONE;
 	}
