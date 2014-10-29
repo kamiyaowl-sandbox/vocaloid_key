@@ -9,8 +9,14 @@
 #define EVY1_BAUD 31250
 #define DEBUG_BAUD 19200
 
+#define BUTTON_INPUT_BUFFER 8
+
 #define FALSE 0
 #define TRUE 1
+
+#define TRIGGER_NONE 0
+#define TRIGGER_PUSH 1
+#define TRIGGER_RELEASE 2
 
 #define TONE_NONE 0
 
@@ -22,11 +28,14 @@ uint8_t cols[10] = {
 	22,24,26,28,30,
 	32,34,36,38,40,
 };
+
 uint8_t rows[6] = { 31,33,35,37,39,41 };
 //各列のデータを保持しておく（送信前に変換
 uint8_t button_inputs[10];
-//
-uint8_t button_datas[60];//押されている番号がtrue
+
+uint8_t button_index = 0;
+uint8_t button_datas[60];//button_datas[i] <=  {button_datas[i][7:1], new_data};
+uint8_t button_triggers[60];
 
 uint8_t cols_size = 10;
 uint8_t rows_size = 6;
@@ -79,11 +88,22 @@ void button_decode(){
 		//あいう～～～～わをまでの5*10
 		for(int i = 0; i < 5 ; ++i){
 			uint8_t index = i + j * 5;
-			button_datas[index] = (button_inputs[j] >> (i + 1)) & 0x1;//i + 1で最上段を読み飛ばす
+			button_datas[index] = (button_datas[index] << 1) | ((button_inputs[j] >> (i + 1)) & 0x1);//i + 1で最上段を読み飛ばす
 		}
 		//上段特殊ボタン(インデックスの方向が逆（実機左から50,51,...59)
-		uint8_t up_index = button_size - j;
-		button_datas[up_index] = button_inputs[j] & 0b1;
+		uint8_t up_index = button_size - 1 - j;
+		button_datas[up_index] = (button_datas[up_index] << 1) | (button_inputs[j] & 0b1);
+	}
+}
+void button_create_trigger(){
+	for(uint8_t i = 0 ; i < button_size ; ++i){
+		if(button_triggers[i] == TRIGGER_NONE && button_datas[i] == 0xff){
+			button_triggers[i] = TRIGGER_PUSH;
+		} else if(button_triggers[i] == TRIGGER_PUSH && button_datas[i] != 0){
+			button_triggers[i] = TRIGGER_RELEASE;
+		} else if(button_triggers[i] == TRIGGER_RELEASE && button_datas[i] == 0){
+			button_triggers[i] = TRIGGER_NONE;
+		}
 	}
 }
 
@@ -93,7 +113,7 @@ void setup() {
 	
 	swserial.begin(EVY1_BAUD);
 	button_init();
-	delay(2000); // wait for the shield to wake up
+	delay(5000); // wait for the shield to wake up
 	
 	evy1.eVocaloid(0,pa_base[7]);
 	evy1.noteOn(0, 0x3c, 0x3f);//3c
@@ -116,11 +136,7 @@ char* talk_data = NULL;
 
 uint8_t talk_tone = TONE_NONE;
 
-unsigned long last_input_tick = 0;
 unsigned long last_talk_tick = 0;
-
-
-unsigned long input_deadtime = 100;
 unsigned long talk_release_span = 1000;
 
 void talk_release( int channel )
@@ -139,22 +155,24 @@ void loop () {
 	/* key read command */
 	button_scan();
 	button_decode();
+	button_create_trigger();
 	
 	for(uint8_t i = 0 ; i < button_size ; ++i){
 		//一番番号のでかいボタンを優先
-		if(button_datas[i]) {
+		if(button_triggers[i] == TRIGGER_PUSH) {
 			button_input = i;
+			Serial.println(i,DEC);
 		}
 	}
 	
+	
 	/* set data */
-	if(button_input_last != button_input && talk_data == NULL && button_input != BUTTON_NONE && (millis() - last_input_tick > input_deadtime)){
+	if(button_input_last != button_input && talk_data == NULL && button_input != BUTTON_NONE){
 		//test
 		if(button_input < 50) talk_data = pa_base[button_input];
 		//Memory
 		button_input_last = button_input;
 		button_input = BUTTON_NONE;
-		last_input_tick = millis();
 	}
 	/* talk */
 	if(talk_data != NULL){

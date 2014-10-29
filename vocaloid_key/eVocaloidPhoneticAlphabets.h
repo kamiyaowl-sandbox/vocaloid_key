@@ -42,7 +42,7 @@ char* pa_base[] = {
 	"m a",			"m\' i",		"m M",			"m e",			"m o",
 	"j a",			"",				"j M",			"",				"j o",
 	"4 a",			"4\' i",		"4 M",			"4 e",			"4 o",
-	"w a",			"w i",			"",				"w e",			"o",
+	"w a",			"w i",			"M",			"w e",			"o",
 };
 char* pa_mark[] = {
 	"",				"",				"",				"",				"",
