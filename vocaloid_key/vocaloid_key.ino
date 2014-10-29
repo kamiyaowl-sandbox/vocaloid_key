@@ -20,6 +20,9 @@
 
 #define TONE_NONE 0
 
+#define PORTAMENT_ON 0x7f
+#define PORTAMENT_OFF 0x0
+
 SoftwareSerial swserial(2,3);
 eVY1 evy1(&swserial);
 
@@ -41,9 +44,22 @@ uint8_t cols_size = 10;
 uint8_t rows_size = 6;
 uint8_t button_size = 60;
 
+const uint8_t tone_fader_pin = A15;
+const uint8_t portament_fader_pin = A14;
+
+const uint8_t pedal2_pin = 45;
 const uint8_t holdpedal_pin = 47;
+const uint8_t portsw_pin = 49;
+const uint8_t portswled_pin = 51;
+
 uint8_t holdpedal_input = 0;//button_datas“I‚È
 uint8_t holdpedal_trigger = TRIGGER_NONE;
+
+uint8_t portament_enable = PORTAMENT_ON;
+uint8_t portsw_input = 0;
+uint8_t portsw_trigger = TRIGGER_NONE;
+
+uint8_t portament_time = 0x0;
 
 void button_init(){
 	for(int i = 0 ; i < cols_size ; ++i){
@@ -114,7 +130,11 @@ void button_create_trigger(){
 void setup() {
 	Serial.begin(DEBUG_BAUD);
 	Serial.println("wakeup");
+	
+	pinMode(pedal2_pin,INPUT_PULLUP);
 	pinMode(holdpedal_pin,INPUT_PULLUP);
+	pinMode(portsw_pin,INPUT_PULLUP);
+	pinMode(portswled_pin,OUTPUT);
 	
 	
 	swserial.begin(EVY1_BAUD);
@@ -154,8 +174,8 @@ void talk_release( int channel )
 void loop () {
 	
 	int channel = 0;
-	evy1.controlChange(channel, MIDI_CC_PORTAMENTO, 0x7f); // Portamento On
-	evy1.controlChange(channel, MIDI_CC_PORTAMENTO_TIME, 0x7f); // Portament Time
+	evy1.controlChange(channel, MIDI_CC_PORTAMENTO, portament_enable); // Portamento On
+	evy1.controlChange(channel, MIDI_CC_PORTAMENTO_TIME, portament_time); // Portament Time
 	//evy1.pitchBend(0,i);
 	
 	/* key read command */
@@ -163,8 +183,25 @@ void loop () {
 	button_decode();
 	button_create_trigger();
 	
+	/* portament */
+	portsw_input = (portsw_input << 1) | (!digitalRead(portswled_pin));
+	if(portsw_trigger == TRIGGER_NONE && portsw_input == 0xff){
+		portsw_trigger = TRIGGER_PUSH;
+			
+		} else if(portsw_trigger == TRIGGER_PUSH && portsw_input != 0){
+		portsw_trigger = TRIGGER_RELEASE;
+
+		} else if(portsw_trigger == TRIGGER_RELEASE && portsw_input == 0){
+		portsw_trigger = TRIGGER_NONE;
+	}
+	if(portsw_trigger == TRIGGER_PUSH){
+		portament_enable = portament_enable == PORTAMENT_OFF ? PORTAMENT_ON : PORTAMENT_OFF;
+	}
+	portament_time = analogRead(portament_fader_pin) >> 3;
+	digitalWrite(portswled_pin,!portament_enable);
+	
 	/* pedal */
-	holdpedal_input = (holdpedal_input << 1) | (!digitalRead(holdpedal_pin));
+	holdpedal_input = (holdpedal_input << 1) | (!digitalRead(holdpedal_pin));//TODO:‚±‚±‚Ìˆ—ã‚Æ‚Ü‚Æ‚ß‚é
 	if(holdpedal_trigger == TRIGGER_NONE && holdpedal_input == 0xff){
 		holdpedal_trigger = TRIGGER_PUSH;
 		
@@ -183,7 +220,6 @@ void loop () {
 		}
 	}
 	
-	
 	/* set data */
 	if(talk_data == NULL && button_input != BUTTON_NONE){
 		//test
@@ -198,7 +234,7 @@ void loop () {
 			talk_release(channel);
 		}
 		/* Tone *///62-85
-		talk_tone = (analogRead(A15) >> 5) + 56;//0~31
+		talk_tone = (analogRead(tone_fader_pin) >> 5) + 56;//0~31
 		/* Talk */
 		evy1.eVocaloid(0,talk_data);
 		evy1.noteOn(channel, talk_tone, 0x3f);//3c

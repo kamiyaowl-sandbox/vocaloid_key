@@ -336,12 +336,6 @@ build.arch=AVR
     </VisualMicroSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ColorLCDShield.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="ColorLCDShield.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="eVocaloidPhoneticAlphabets.h">
       <SubType>compile</SubType>
     </Compile>

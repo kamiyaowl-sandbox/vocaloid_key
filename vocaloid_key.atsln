@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "vocaloid_key", "vocaloid_key\vocaloid_key.cppproj", "{F3DF8C2F-BA79-4337-8970-98351F3B2104}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "matrix_key", "matrix_key\matrix_key.cppproj", "{8433BE55-A634-41D6-961E-C2000A1BC675}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -15,10 +13,6 @@ Global
 		{F3DF8C2F-BA79-4337-8970-98351F3B2104}.Debug|AVR.Build.0 = Debug|AVR
 		{F3DF8C2F-BA79-4337-8970-98351F3B2104}.Release|AVR.ActiveCfg = Release|AVR
 		{F3DF8C2F-BA79-4337-8970-98351F3B2104}.Release|AVR.Build.0 = Release|AVR
-		{8433BE55-A634-41D6-961E-C2000A1BC675}.Debug|AVR.ActiveCfg = Debug|AVR
-		{8433BE55-A634-41D6-961E-C2000A1BC675}.Debug|AVR.Build.0 = Debug|AVR
-		{8433BE55-A634-41D6-961E-C2000A1BC675}.Release|AVR.ActiveCfg = Release|AVR
-		{8433BE55-A634-41D6-961E-C2000A1BC675}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
