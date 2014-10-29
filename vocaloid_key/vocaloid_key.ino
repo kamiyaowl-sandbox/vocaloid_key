@@ -41,6 +41,10 @@ uint8_t cols_size = 10;
 uint8_t rows_size = 6;
 uint8_t button_size = 60;
 
+const uint8_t holdpedal_pin = 47;
+uint8_t holdpedal_input = 0;//button_datas“I‚È
+uint8_t holdpedal_trigger = TRIGGER_NONE;
+
 void button_init(){
 	for(int i = 0 ; i < cols_size ; ++i){
 		pinMode(cols[i],OUTPUT);
@@ -110,6 +114,8 @@ void button_create_trigger(){
 void setup() {
 	Serial.begin(DEBUG_BAUD);
 	Serial.println("wakeup");
+	pinMode(holdpedal_pin,INPUT_PULLUP);
+	
 	
 	swserial.begin(EVY1_BAUD);
 	button_init();
@@ -157,6 +163,18 @@ void loop () {
 	button_decode();
 	button_create_trigger();
 	
+	/* pedal */
+	holdpedal_input = (holdpedal_input << 1) | (!digitalRead(holdpedal_pin));
+	if(holdpedal_trigger == TRIGGER_NONE && holdpedal_input == 0xff){
+		holdpedal_trigger = TRIGGER_PUSH;
+		
+	} else if(holdpedal_trigger == TRIGGER_PUSH && holdpedal_input != 0){
+		holdpedal_trigger = TRIGGER_RELEASE;
+
+	} else if(holdpedal_trigger == TRIGGER_RELEASE && holdpedal_input == 0){
+		holdpedal_trigger = TRIGGER_NONE;
+	}
+	 
 	for(uint8_t i = 0 ; i < button_size ; ++i){
 		//ˆê”Ô”Ô†‚Ì‚Å‚©‚¢ƒ{ƒ^ƒ“‚ð—Dæ
 		if(button_triggers[i] == TRIGGER_PUSH) {
@@ -167,7 +185,7 @@ void loop () {
 	
 	
 	/* set data */
-	if(button_input_last != button_input && talk_data == NULL && button_input != BUTTON_NONE){
+	if(talk_data == NULL && button_input != BUTTON_NONE){
 		//test
 		if(button_input < 50) talk_data = pa_base[button_input];
 		//Memory
@@ -196,7 +214,8 @@ void loop () {
 		talk_data = NULL;
 	}
 	/* talk release */
-	if(talk_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span){
+	if((talk_tone != TONE_NONE && holdpedal_trigger == TRIGGER_RELEASE) ||
+		(talk_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span)){
 		talk_release(channel);
 		button_input_last = BUTTON_NONE;
 	}
