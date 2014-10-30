@@ -8,6 +8,7 @@
 
 #define EVY1_BAUD 31250
 #define DEBUG_BAUD 19200
+#define INDICATOR_BAUD 31250
 
 #define BUTTON_INPUT_BUFFER 8
 
@@ -23,9 +24,40 @@
 #define PORTAMENT_ON 0x7f
 #define PORTAMENT_OFF 0x0
 
-SoftwareSerial swserial(2,3);
-eVY1 evy1(&swserial);
+#define PA_MODE_NONE			0
+#define PA_MODE_EX_A			50
+#define PA_MODE_EX_I			51
+#define PA_MODE_EX_U			52
+#define PA_MODE_EX_E			53
+#define PA_MODE_EX_O			54
+#define PA_MODE_EX_YA			55
+#define PA_MODE_EX_YU			56
+#define PA_MODE_EX_YO			57
+#define PA_MODE_MARK			58
+#define PA_MODE_HALFMARK		59
 
+#define MIDI_C 	0
+#define MIDI_CS 1
+#define MIDI_D 	2
+#define MIDI_DS 3
+#define MIDI_E 	4
+#define MIDI_F 	5
+#define MIDI_FS 6
+#define MIDI_G 	7
+#define MIDI_GS	8
+#define MIDI_A 	9
+#define MIDI_AS 10
+#define MIDI_B 	11
+
+#define MIDI_KEY_LOW 	0
+#define MIDI_KEY_MID 	1
+#define MIDI_KEY_HIGH	2
+
+
+SoftwareSerial sw_serial(2,3);
+eVY1 evy1(&sw_serial);
+
+SoftwareSerial indi_serial(24,7);//7 is tx port
 
 uint8_t cols[10] = {
 	32,34,36,38,40,
@@ -60,18 +92,6 @@ uint8_t portsw_input = 0;
 uint8_t portsw_trigger = TRIGGER_NONE;
 
 uint8_t portament_time = 0x0;
-
-#define PA_MODE_NONE			0
-#define PA_MODE_EX_A			50
-#define PA_MODE_EX_I			51
-#define PA_MODE_EX_U			52
-#define PA_MODE_EX_E			53
-#define PA_MODE_EX_O			54
-#define PA_MODE_EX_YA			55
-#define PA_MODE_EX_YU			56
-#define PA_MODE_EX_YO			57
-#define PA_MODE_MARK			58
-#define PA_MODE_HALFMARK		59
 
 uint16_t pa_mode = PA_MODE_NONE;
 uint16_t pa_mode_sub = PA_MODE_NONE;
@@ -108,6 +128,23 @@ char **double_pa_table[][8] = {
         pa_halfmarkextra_y,//yo
     },      
 };
+
+const uint8_t sharp_definition[] = {0,1,0,1,0,0,1,0,1,0,1,0,};
+const uint8_t send_code_definition[] = {2,2,3,3,4,5,5,6,6,0,0,1};
+void midi_convert_impl(uint8_t src, uint8_t* key, uint8_t* sharp, uint8_t* send_code){
+	uint8_t hoge = (src - 48);
+	*key = hoge / 12;
+	
+	uint8_t code = hoge % 12;
+	*sharp = sharp_definition[code];
+	*send_code = send_code_definition[code];
+}
+
+uint8_t midi_convert(uint8_t src){
+	uint8_t key,sharp,code;
+	midi_convert_impl(src, &key, &sharp, &code);
+	return ((key & 0xf) << 4) | ((sharp & 0x1) << 3) | (code & 0x7);
+}
 
 void button_init(){
 	for(int i = 0 ; i < cols_size ; ++i){
@@ -190,6 +227,7 @@ void matrix_button_trigger(){
 }
 void setup() {
 	Serial.begin(DEBUG_BAUD);
+	indi_serial.begin(INDICATOR_BAUD);
 	Serial.println("wakeup");
 	
 	pinMode(pedal2_pin,INPUT_PULLUP);
@@ -198,7 +236,7 @@ void setup() {
 	pinMode(portswled_pin,OUTPUT);
 	
 	
-	swserial.begin(EVY1_BAUD);
+	sw_serial.begin(EVY1_BAUD);
 	button_init();
 	delay(5000); // wait for the shield to wake up
 	
@@ -240,6 +278,8 @@ uint8_t talk_tone = TONE_NONE;
 unsigned long last_talk_tick = 0;
 unsigned long talk_release_span = 10000;
 
+uint8_t current_tone = 0;
+
 void talk_release( int channel )
 {
 	evy1.noteOn(channel,talk_tone,0x0);
@@ -253,12 +293,35 @@ void update_matrixkey()
 	matrix_button_trigger();
 }
 
+
+
+#define TONE_QUEUE_SIZE 8
+uint16_t tone_queue[TONE_QUEUE_SIZE] = {};
+uint16_t tone_queue_ptr = 0;
+
+uint16_t update_tone_queue(uint16_t src){
+	tone_queue[tone_queue_ptr] = src;
+	tone_queue_ptr = (tone_queue_ptr + 1) % TONE_QUEUE_SIZE;
+	
+	uint16_t sum = 0x0;
+	for(uint8_t i = 0 ; i < TONE_QUEUE_SIZE ; ++i){
+		sum += tone_queue[i];
+	}
+	return sum / TONE_QUEUE_SIZE;
+}
+
+
 void loop () {
 	
 	int channel = 0;
 	evy1.controlChange(channel, MIDI_CC_PORTAMENTO, portament_enable); // Portamento On
 	evy1.controlChange(channel, MIDI_CC_PORTAMENTO_TIME, portament_time); // Portament Time
 	//evy1.pitchBend(0,i);
+	
+	/* tone select */
+	current_tone = (uint8_t)(36 * (update_tone_queue(analogRead(tone_fader_pin)) / (float)1024)) + 48;
+	Serial.println(current_tone,DEC);
+	indi_serial.write(midi_convert(current_tone));
 	
 	/* key read command */
 	update_matrixkey();
@@ -330,7 +393,7 @@ void loop () {
 			talk_release(channel);
 		}
 		/* Tone */
-		talk_tone = (analogRead(tone_fader_pin) >> 5) + 56;//‰¹ŠK‚Í“K“–‚ÉŒvŽZ‚µ‚Ä‚é
+		talk_tone = current_tone;//‰¹ŠK‚Í“K“–‚ÉŒvŽZ‚µ‚Ä‚é
 		/* Talk */
 		evy1.eVocaloid(0,talk_data);
 		evy1.noteOn(channel, talk_tone, 0x3f);//3c

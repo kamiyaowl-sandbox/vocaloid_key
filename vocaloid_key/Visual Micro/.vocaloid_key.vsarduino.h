@@ -16,6 +16,8 @@
 #define __cplusplus
 extern "C" void __cxa_pure_virtual() {;}
 
+void midi_convert_impl(uint8_t src, uint8_t* key, uint8_t* sharp, uint8_t* send_code);
+uint8_t midi_convert(uint8_t src);
 void button_init();
 void button_scan();
 void button_decode();
@@ -24,6 +26,7 @@ void matrix_button_trigger();
 //
 void talk_release( int channel );
 void update_matrixkey();
+uint16_t update_tone_queue(uint16_t src);
 //
 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\variants\mega\pins_arduino.h" 
