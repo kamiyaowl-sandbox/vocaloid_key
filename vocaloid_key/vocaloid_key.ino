@@ -28,8 +28,8 @@ eVY1 evy1(&swserial);
 
 
 uint8_t cols[10] = {
-	22,24,26,28,30,
 	32,34,36,38,40,
+	42,44,46,48,50,
 };
 
 uint8_t rows[6] = { 31,33,35,37,39,41 };
@@ -188,7 +188,6 @@ void matrix_button_trigger(){
 		}
 	}
 }
-
 void setup() {
 	Serial.begin(DEBUG_BAUD);
 	Serial.println("wakeup");
@@ -203,11 +202,25 @@ void setup() {
 	button_init();
 	delay(5000); // wait for the shield to wake up
 	
-	evy1.eVocaloid(0,pa_base[7]);
+	/* wakeup call */
+	const int duration = 500;
+	evy1.eVocaloid(0,"S i");
 	evy1.noteOn(0, 0x3c, 0x3f);//3c
-	delay(250);
+	delay(duration);
+	
+	evy1.eVocaloid(0,"m a");
+	evy1.noteOn(0, 0x40, 0x3f);//3c
+	delay(duration);
+
+	evy1.eVocaloid(0,"k e");
+	evy1.noteOn(0, 0x43, 0x3f);//3c
+	delay(duration);
 	evy1.noteOn(0,0x3c,0x0);
-	delay(100);
+
+	evy1.eVocaloid(0,"M");
+	evy1.noteOn(0, 0x4f, 0x3f);//3c
+	delay(duration);
+	evy1.noteOn(0,0x4f,0x0);
 
 }
 uint8_t note_nums[] = {
@@ -316,8 +329,8 @@ void loop () {
 		if(talk_tone != TONE_NONE){
 			talk_release(channel);
 		}
-		/* Tone *///62-85
-		talk_tone = (analogRead(tone_fader_pin) >> 5) + 56;//0~31
+		/* Tone */
+		talk_tone = (analogRead(tone_fader_pin) >> 5) + 56;//‰¹ŠK‚Í“K“–‚ÉŒvŽZ‚µ‚Ä‚é
 		/* Talk */
 		evy1.eVocaloid(0,talk_data);
 		evy1.noteOn(channel, talk_tone, 0x3f);//3c
