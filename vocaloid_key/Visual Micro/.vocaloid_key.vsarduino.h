@@ -19,7 +19,8 @@ extern "C" void __cxa_pure_virtual() {;}
 void button_init();
 void button_scan();
 void button_decode();
-void button_create_trigger();
+void get_button_trigger(uint8_t source,uint8_t* input_buf,uint8_t* result);
+void matrix_button_trigger();
 //
 void talk_release( int channel );
 //

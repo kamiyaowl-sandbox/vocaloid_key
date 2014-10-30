@@ -115,7 +115,21 @@ void button_decode(){
 		button_datas[up_index] = (button_datas[up_index] << 1) | (button_inputs[j] & 0b1);
 	}
 }
-void button_create_trigger(){
+void get_button_trigger(uint8_t source,uint8_t* input_buf,uint8_t* result){
+	*input_buf = (*input_buf << 1) | source;
+	if(*result == TRIGGER_NONE && *input_buf == 0xff){
+		*result = TRIGGER_PUSH;
+		
+		} else if(*result == TRIGGER_PUSH && *input_buf != 0){
+		*result = TRIGGER_RELEASE;
+
+		} else if(*result == TRIGGER_RELEASE && *input_buf == 0){
+		*result = TRIGGER_NONE;
+	}
+}
+
+
+void matrix_button_trigger(){
 	for(uint8_t i = 0 ; i < button_size ; ++i){
 		if(button_triggers[i] == TRIGGER_NONE && button_datas[i] == 0xff){
 			button_triggers[i] = TRIGGER_PUSH;
@@ -181,36 +195,19 @@ void loop () {
 	/* key read command */
 	button_scan();
 	button_decode();
-	button_create_trigger();
+	matrix_button_trigger();
 	
 	/* portament */
-	portsw_input = (portsw_input << 1) | (!digitalRead(portswled_pin));
-	if(portsw_trigger == TRIGGER_NONE && portsw_input == 0xff){
-		portsw_trigger = TRIGGER_PUSH;
-			
-		} else if(portsw_trigger == TRIGGER_PUSH && portsw_input != 0){
-		portsw_trigger = TRIGGER_RELEASE;
-
-		} else if(portsw_trigger == TRIGGER_RELEASE && portsw_input == 0){
-		portsw_trigger = TRIGGER_NONE;
-	}
+	get_button_trigger(!digitalRead(portsw_pin),&portsw_input,&portsw_trigger);
 	if(portsw_trigger == TRIGGER_PUSH){
-		portament_enable = portament_enable == PORTAMENT_OFF ? PORTAMENT_ON : PORTAMENT_OFF;
+		portament_enable = (portament_enable == PORTAMENT_OFF) ? PORTAMENT_ON : PORTAMENT_OFF;
+		Serial.println("portament trigger");
 	}
 	portament_time = analogRead(portament_fader_pin) >> 3;
 	digitalWrite(portswled_pin,!portament_enable);
 	
 	/* pedal */
-	holdpedal_input = (holdpedal_input << 1) | (!digitalRead(holdpedal_pin));//TODO:‚±‚±‚Ìˆ—ã‚Æ‚Ü‚Æ‚ß‚é
-	if(holdpedal_trigger == TRIGGER_NONE && holdpedal_input == 0xff){
-		holdpedal_trigger = TRIGGER_PUSH;
-		
-	} else if(holdpedal_trigger == TRIGGER_PUSH && holdpedal_input != 0){
-		holdpedal_trigger = TRIGGER_RELEASE;
-
-	} else if(holdpedal_trigger == TRIGGER_RELEASE && holdpedal_input == 0){
-		holdpedal_trigger = TRIGGER_NONE;
-	}
+	get_button_trigger(!digitalRead(holdpedal_pin),&holdpedal_input,&holdpedal_trigger);
 	 
 	for(uint8_t i = 0 ; i < button_size ; ++i){
 		//ˆê”Ô”Ô†‚Ì‚Å‚©‚¢ƒ{ƒ^ƒ“‚ð—Dæ
