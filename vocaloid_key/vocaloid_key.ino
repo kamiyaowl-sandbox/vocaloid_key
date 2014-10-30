@@ -52,7 +52,7 @@ const uint8_t holdpedal_pin = 47;
 const uint8_t portsw_pin = 49;
 const uint8_t portswled_pin = 51;
 
-uint8_t holdpedal_input = 0;//button_datas的な
+uint8_t holdpedal_input = 0;
 uint8_t holdpedal_trigger = TRIGGER_NONE;
 
 uint8_t portament_enable = PORTAMENT_ON;
@@ -60,6 +60,54 @@ uint8_t portsw_input = 0;
 uint8_t portsw_trigger = TRIGGER_NONE;
 
 uint8_t portament_time = 0x0;
+
+#define PA_MODE_NONE			0
+#define PA_MODE_EX_A			50
+#define PA_MODE_EX_I			51
+#define PA_MODE_EX_U			52
+#define PA_MODE_EX_E			53
+#define PA_MODE_EX_O			54
+#define PA_MODE_EX_YA			55
+#define PA_MODE_EX_YU			56
+#define PA_MODE_EX_YO			57
+#define PA_MODE_MARK			58
+#define PA_MODE_HALFMARK		59
+
+uint16_t pa_mode = PA_MODE_NONE;
+uint16_t pa_mode_sub = PA_MODE_NONE;
+char **single_pa_table[] = {
+    pa_extra_a,
+    pa_extra_i,
+    pa_extra_u,
+    pa_extra_e,
+    pa_extra_o,
+    pa_extra_ya,
+    pa_extra_yu,
+    pa_extra_yo,
+    pa_mark,
+    pa_halfmark,    
+};
+char **double_pa_table[][8] = {
+    {
+        pa_markextra_vowel,//a
+        pa_markextra_vowel,//i
+        pa_markextra_vowel,//u
+        pa_markextra_vowel,//e
+        pa_markextra_vowel,//o
+        pa_markextra_y,//ya
+        pa_markextra_y,//yu
+        pa_markextra_y,//yo
+    },    {
+        pa_halfmarkextra_vowel,//a
+        pa_halfmarkextra_vowel,//i
+        pa_halfmarkextra_vowel,//u
+        pa_halfmarkextra_vowel,//e
+        pa_halfmarkextra_vowel,//o
+        pa_halfmarkextra_y,//ya
+        pa_halfmarkextra_y,//yu
+        pa_halfmarkextra_y,//yo
+    },      
+};
 
 void button_init(){
 	for(int i = 0 ; i < cols_size ; ++i){
@@ -133,9 +181,9 @@ void matrix_button_trigger(){
 	for(uint8_t i = 0 ; i < button_size ; ++i){
 		if(button_triggers[i] == TRIGGER_NONE && button_datas[i] == 0xff){
 			button_triggers[i] = TRIGGER_PUSH;
-		} else if(button_triggers[i] == TRIGGER_PUSH && button_datas[i] != 0){
+			} else if(button_triggers[i] == TRIGGER_PUSH && button_datas[i] != 0){
 			button_triggers[i] = TRIGGER_RELEASE;
-		} else if(button_triggers[i] == TRIGGER_RELEASE && button_datas[i] == 0){
+			} else if(button_triggers[i] == TRIGGER_RELEASE && button_datas[i] == 0){
 			button_triggers[i] = TRIGGER_NONE;
 		}
 	}
@@ -177,12 +225,19 @@ char* talk_data = NULL;
 uint8_t talk_tone = TONE_NONE;
 
 unsigned long last_talk_tick = 0;
-unsigned long talk_release_span = 1000;
+unsigned long talk_release_span = 10000;
 
 void talk_release( int channel )
 {
 	evy1.noteOn(channel,talk_tone,0x0);
 	talk_tone = TONE_NONE;
+}
+
+void update_matrixkey()
+{
+	button_scan();
+	button_decode();
+	matrix_button_trigger();
 }
 
 void loop () {
@@ -193,22 +248,19 @@ void loop () {
 	//evy1.pitchBend(0,i);
 	
 	/* key read command */
-	button_scan();
-	button_decode();
-	matrix_button_trigger();
+	update_matrixkey();
 	
 	/* portament */
 	get_button_trigger(!digitalRead(portsw_pin),&portsw_input,&portsw_trigger);
 	if(portsw_trigger == TRIGGER_PUSH){
 		portament_enable = (portament_enable == PORTAMENT_OFF) ? PORTAMENT_ON : PORTAMENT_OFF;
-		Serial.println("portament trigger");
 	}
 	portament_time = analogRead(portament_fader_pin) >> 3;
 	digitalWrite(portswled_pin,!portament_enable);
 	
 	/* pedal */
 	get_button_trigger(!digitalRead(holdpedal_pin),&holdpedal_input,&holdpedal_trigger);
-	 
+	
 	for(uint8_t i = 0 ; i < button_size ; ++i){
 		//一番番号のでかいボタンを優先
 		if(button_triggers[i] == TRIGGER_PUSH) {
@@ -219,8 +271,42 @@ void loop () {
 	
 	/* set data */
 	if(talk_data == NULL && button_input != BUTTON_NONE){
-		//test
-		if(button_input < 50) talk_data = pa_base[button_input];
+		//五十音->そのまま返す
+		//小子音or濁点->テーブルを該当子音に置換
+		//小子音and濁点->更にテーブルを置換
+		if(button_input > 49) {
+            if(pa_mode == PA_MODE_NONE){
+                pa_mode = button_input;
+            } else if(pa_mode != button_input){
+                if(pa_mode_sub != button_input 
+                    //組み合わせ不能なペアの除去
+					&& (!((pa_mode == PA_MODE_MARK && button_input == PA_MODE_HALFMARK) || (button_input != PA_MODE_MARK || pa_mode == PA_MODE_HALFMARK)))
+                    && (((pa_mode == PA_MODE_MARK || pa_mode == PA_MODE_HALFMARK) && (button_input != PA_MODE_MARK || button_input != PA_MODE_HALFMARK))
+						|| ((pa_mode != PA_MODE_MARK || pa_mode != PA_MODE_HALFMARK) && (button_input == PA_MODE_MARK || button_input == PA_MODE_HALFMARK)))
+                    ){
+                    pa_mode_sub = button_input;
+                } else {
+                    pa_mode_sub = PA_MODE_NONE;
+                }
+            } else {
+                pa_mode = PA_MODE_NONE;
+            }
+        }else if(button_input < 50) {
+            if(pa_mode == PA_MODE_NONE && pa_mode_sub == PA_MODE_NONE){
+                talk_data = pa_base[button_input];
+            } else if(pa_mode != PA_MODE_NONE && pa_mode_sub == PA_MODE_NONE){
+                talk_data = single_pa_table[pa_mode - PA_MODE_EX_A][button_input];
+                pa_mode = PA_MODE_NONE;
+            } else if(pa_mode != PA_MODE_NONE && pa_mode_sub != PA_MODE_NONE){
+				uint8_t mark = pa_mode > pa_mode_sub ? pa_mode : pa_mode_sub;//濁点のほうがボタン番号が後とかいうゴミ実装
+				uint8_t index = ((pa_mode > pa_mode_sub) ? pa_mode_sub : pa_mode) - PA_MODE_EX_A;
+
+				talk_data = double_pa_table[mark == PA_MODE_HALFMARK][index][button_input];
+
+				pa_mode = PA_MODE_NONE;
+				pa_mode_sub = PA_MODE_NONE;
+            }                
+        }            
 		//Memory
 		button_input_last = button_input;
 		button_input = BUTTON_NONE;
@@ -248,7 +334,7 @@ void loop () {
 	}
 	/* talk release */
 	if((talk_tone != TONE_NONE && holdpedal_trigger == TRIGGER_RELEASE) ||
-		(talk_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span)){
+	(talk_tone != TONE_NONE && millis() - last_talk_tick > talk_release_span)){
 		talk_release(channel);
 		button_input_last = BUTTON_NONE;
 	}

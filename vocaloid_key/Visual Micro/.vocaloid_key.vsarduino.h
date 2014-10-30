@@ -23,6 +23,7 @@ void get_button_trigger(uint8_t source,uint8_t* input_buf,uint8_t* result);
 void matrix_button_trigger();
 //
 void talk_release( int channel );
+void update_matrixkey();
 //
 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\variants\mega\pins_arduino.h" 

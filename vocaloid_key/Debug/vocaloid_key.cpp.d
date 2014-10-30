@@ -1,12 +1,11 @@
  \
- C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\vocaloid_key.cpp.o:  \
- C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\vocaloid_key.cpp \
-  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\/eVY1.h \
-  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\/midiClass.h \
-  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\/eVY1Data.h \
-  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\/midiData.h \
-  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\/ColorLCDShield.h \
-  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\uno\/eVocaloidPhoneticAlphabets.h \
+ C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\vocaloid_key.cpp.o:  \
+ C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\vocaloid_key.cpp \
+  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\/eVY1.h \
+  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\/midiClass.h \
+  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\/eVY1Data.h \
+  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\/midiData.h \
+  C:\Users\e10108\AppData\Local\VMicro\Arduino\Builds\vocaloid_key\mega2560\/eVocaloidPhoneticAlphabets.h \
   C:\Program\ Files\ (x86)\Arduino\libraries\SoftwareSerial/SoftwareSerial.h \
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino/Stream.h \
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino/Print.h \
@@ -18,4 +17,4 @@
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino/WCharacter.h \
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino/HardwareSerial.h \
   C:\Program\ Files\ (x86)\Arduino\hardware\arduino\cores\arduino/Stream.h \
-  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\variants\standard/pins_arduino.h
+  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\variants\mega/pins_arduino.h
